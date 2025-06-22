@@ -33,7 +33,7 @@ const char* vulkanSDKPathINC;
 #define PLATFORM_LINKER_FLAGS "-lvulkan", "-lX11", "-lXrandr", "-lshaderc", "-lc", "-lm"
 #endif
 
-#define OUTPUT_PROGRAM_NAME "main"
+#define OUTPUT_PROGRAM_NAME "fplayer"
 #define COMPILER_ARGS PLATFORM_COMPILER_ARGS "-I./", "-I./src"
 #define LINKER_FLAGS PLATFORM_LINKER_FLAGS "-lavcodec", "-lavdevice", "-lavfilter", "-lavformat", "-lavutil", "-lswscale", "-lswresample", "-lfreetype"
 #define BUILD_PATH(debug) (debug ? "build/debug/" : "build/release/")
@@ -318,6 +318,11 @@ static bool link_files(Nob_Cmd* cmd, const char* output_filename,
     nob_cc_output(cmd, output_filename);
     nob_cmd_append(cmd, LINKER_FLAGS);
     if (debug) nob_cmd_append(cmd, "-g");
+    #ifdef _WIN32
+    else nob_cmd_append(cmd, "-Wl,/subsystem:windows");
+
+    nob_cmd_append(cmd, "assets/fplayer.res");
+    #endif
     return nob_cmd_run_sync(*cmd);
 }
 

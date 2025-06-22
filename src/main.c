@@ -87,7 +87,7 @@ int main(int argc, char** argv){
     }
     TIMER = platform_get_time();
     TIMER_TOTAL = TIMER;
-    if(!engineInit("FVFX", 640,480)) return 1;
+    if(!engineInit("Fplayer", 640,480)) return 1;
     CHECK_TIMER("init engine");
 
     {
@@ -96,7 +96,6 @@ int main(int argc, char** argv){
         // ------------------ sprite manager initialization ------------------
 
         File_Paths initialTextures = {0};
-        da_append(&initialTextures,"assets/Jimbo100x.png");
         if(!initBindlessTextures(initialTextures)) return 1;
 
         String_Builder sb = {0};
@@ -290,7 +289,6 @@ bool update(float deltaTime){
     if(newScroll != soundVolume){
         soundEngineSetVolume(newScroll);
         soundVolume = newScroll;
-        printf("Set volume to: %.2f%\n", newScroll);
     }
 
     if(input.keys[KEY_SPACE].justPressed) playing = !playing;
@@ -346,7 +344,6 @@ bool update(float deltaTime){
     Rect previewPos = (Rect){
         .width = swapchainExtent.width,
         .height = fullscreen ? swapchainExtent.height : swapchainExtent.height - timelineRect.height,
-        .y = fullscreen ? 0 : 30,
     };
 
     timelineRect.y = previewPos.y + previewPos.height;
@@ -417,9 +414,6 @@ bool update(float deltaTime){
         drawSprite((SpriteDrawCommand){
             .position = (vec2){previewPos.x,previewPos.y},
             .scale = (vec2){previewPos.width, previewPos.height},
-            // .textureIDEffects = getTextureID("assets/Jimbo100x.png"),
-            // .offset = (vec2){time,time/2},
-            // .size = (vec2){1.0f+(sinf(backgroundSpeed)/2+0.5)*7,1.0f+(sinf(backgroundSpeed)/2+0.5)*7},
         });
     
         float percent = videoFrame.frameTime / video.duration;
@@ -431,20 +425,29 @@ bool update(float deltaTime){
             .scale = (vec2){cursorWidth, timelineRect.height},
             .albedo = (vec3){1.0,0.0,0.0},
         });
-    
-        drawText("FVFX", 0xFFFFFF, 16, (Rect){
-            .x = 10,
-            .y = 3,
+
+        float textFont = 16;
+
+        drawSprite((SpriteDrawCommand){
+            .position = (vec2){timelineRect.x, timelineRect.y+timelineRect.height - textFont * 1.5},
+            .scale = (vec2){timelineRect.width, textFont * 1.5},
+            .albedo = (vec3){(float)0x10 / 255,(float)0x10 / 255,(float)0x10 / 255},
         });
     
         char text[256];
-        float textFont = 16;
     
         sprintf(text, "%.2fs/%.2fs", videoFrame.frameTime, video.duration);
     
         drawText(text, 0xFFFFFF, textFont, (Rect){
             .x = swapchainExtent.width / 2 - measureText(text,textFont) / 2,
-            .y = 3,
+            .y = timelineRect.y+timelineRect.height - textFont*1.5,
+        });
+
+        sprintf(text, "Loudness: %d%%", (int)floorf(soundVolume*100));
+
+        drawText(text, 0xFFFFFF, textFont, (Rect){
+            .x = 10,
+            .y = timelineRect.y+timelineRect.height - textFont*1.5,
         });
     }
 
