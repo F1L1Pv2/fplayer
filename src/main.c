@@ -338,7 +338,7 @@ bool update(float deltaTime){
 
     Rect timelineRect = (Rect){
         .width = swapchainExtent.width,
-        .height = min(((float)swapchainExtent.height / 4), 200.0f)
+        .height = 50.0f,
     };
 
     Rect previewPos = (Rect){
@@ -429,7 +429,7 @@ bool update(float deltaTime){
         float textFont = 16;
 
         drawSprite((SpriteDrawCommand){
-            .position = (vec2){timelineRect.x, timelineRect.y+timelineRect.height - textFont * 1.5},
+            .position = (vec2){timelineRect.x, timelineRect.y},
             .scale = (vec2){timelineRect.width, textFont * 1.5},
             .albedo = (vec3){(float)0x10 / 255,(float)0x10 / 255,(float)0x10 / 255},
         });
@@ -440,14 +440,14 @@ bool update(float deltaTime){
     
         drawText(text, 0xFFFFFF, textFont, (Rect){
             .x = swapchainExtent.width / 2 - measureText(text,textFont) / 2,
-            .y = timelineRect.y+timelineRect.height - textFont*1.5,
+            .y = timelineRect.y,
         });
 
         sprintf(text, "Loudness: %d%%", (int)floorf(soundVolume*100));
 
         drawText(text, 0xFFFFFF, textFont, (Rect){
             .x = 10,
-            .y = timelineRect.y+timelineRect.height - textFont*1.5,
+            .y = timelineRect.y,
         });
     }
 
